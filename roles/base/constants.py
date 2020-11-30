@@ -12,3 +12,4 @@ class LogActionConstants:
     APPROVED = 5
     GET_TWEETS = 6
     SIGN_UP = 7
+    READ_LOGS = 8

@@ -16,11 +16,12 @@ class SignupView(AbstractAPIView):
         username = request.data.get('username')
         password = request.data.get('password')
         self.log_type = LogTypeConstants.ACCESS
-        self.log_action = LogActionConstants.GET_TWEETS
+        self.log_action = LogActionConstants.SIGN_UP
         user = User.objects.create_user(
             username=username, password=password)
         group = Group.objects.get(name='USER')
         user.groups.add(group)
+        self.log_object = user
         return Response({
             'id': user.id,
             'username': user.username,

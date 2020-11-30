@@ -132,10 +132,10 @@ class ApproveChange(AbstractAPIView):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated, IsSuperAdminUser)
 
-    def get(self, request, id, *args, **kwargs):
+    def get(self, request, id=None):
         if not id:
             tweets = Tweet.objects.exclude(status__in=(
-                TweetStatusConstants.APPROVED, TweetStatusConstants.DELETED))\
+                TweetStatusConstants.APPROVED, TweetStatusConstants.DELETED)) \
                 .order_by('-created_at')
             return Response([{
                 'id': tweet.id,
@@ -172,10 +172,12 @@ class ReadAuditLogs(AbstractAPIView):
     permission_classes = (IsAuthenticated, IsSuperAdminUser)
 
     def get(self, request, *args, **kwargs):
+        self.log_type = LogTypeConstants.AUDIT
+        self.log_action = LogActionConstants.READ_LOGS
         action_logs = ActionLogModel.objects.all().order_by('-created_at')
         return Response([{
             'id': action_log.id,
-            'user': action_log.user.username,
+            'user': action_log.user.username if action_log.user else None,
             'log_type': action_log.log_type,
             'action': action_log.action,
             # Forcing string representation.

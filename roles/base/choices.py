@@ -17,6 +17,7 @@ def get_log_action_choices():
         ('REQUESTED_CHANGE', LogActionConstants.REQUESTED_CHANGE),
         ('APPROVED', LogActionConstants.APPROVED),
         ('GET_TWEETS', LogActionConstants.GET_TWEETS),
-        ('SIGN_UP', LogActionConstants.SIGN_UP)
+        ('SIGN_UP', LogActionConstants.SIGN_UP),
+        ('READ_LOGS', LogActionConstants.READ_LOGS)
     ]
 
