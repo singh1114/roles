@@ -1,10 +1,13 @@
-class LogTypeConstants:
+from enum import Enum
+
+
+class LogTypeConstants(Enum):
     ACTION = 1
     AUDIT = 2
     ACCESS = 3
 
 
-class LogActionConstants:
+class LogActionConstants(Enum):
     TWEET = 1
     LOGIN = 2
     DELETE = 3

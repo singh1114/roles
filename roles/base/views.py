@@ -16,6 +16,6 @@ class AbstractAPIView(APIView):
             if isinstance(user, AnonymousUser):
                 user = None
             ActionLogModel.objects.create(
-                user=user, log_type=self.log_type,
-                action=self.log_action, content_object=self.log_object)
+                user=user, log_type=self.log_type.value,
+                action=self.log_action.value, content_object=self.log_object)
         return super().finalize_response(request, response, args, kwargs)

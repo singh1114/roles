@@ -16,6 +16,6 @@ class Tweet(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.IntegerField(
         choices=get_tweet_status_choices(),
-        default=TweetStatusConstants.APPROVED
+        default=TweetStatusConstants.APPROVED.value
     )
     updated_text = models.TextField(max_length=200)

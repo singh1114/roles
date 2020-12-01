@@ -13,11 +13,11 @@ class ActionLogModel(models.Model):
         User, on_delete=models.CASCADE, null=True, blank=True)
     log_type = models.IntegerField(
         choices=get_log_type_choices(),
-        default=LogTypeConstants.ACTION
+        default=LogTypeConstants.ACTION.value
     )
     action = models.IntegerField(
         choices=get_log_action_choices(),
-        default=LogActionConstants.TWEET
+        default=LogActionConstants.TWEET.value
     )
     content_type = models.ForeignKey(ContentType, blank=True, null=True,
                                      on_delete=models.SET_NULL)

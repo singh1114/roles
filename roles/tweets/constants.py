@@ -1,4 +1,7 @@
-class TweetStatusConstants:
+from enum import Enum
+
+
+class TweetStatusConstants(Enum):
     INITIATED_CREATE = 1
     APPROVED = 2
     DELETED = 3

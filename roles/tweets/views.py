@@ -23,7 +23,7 @@ class TweetView(AbstractAPIView):
         self.log_action = LogActionConstants.GET_TWEETS
         tweets = Tweet.objects.filter(
             user=request.user,
-            status=TweetStatusConstants.APPROVED).order_by('-created_at')
+            status=TweetStatusConstants.APPROVED.value).order_by('-created_at')
         return Response([{
             'id': tweet.id,
             'text': tweet.text,
@@ -50,7 +50,7 @@ class TweetView(AbstractAPIView):
         self.log_action = LogActionConstants.TWEET
         try:
             tweet = Tweet.objects.get(id=id, user=request.user)
-            tweet.status = TweetStatusConstants.DELETED
+            tweet.status = TweetStatusConstants.DELETED.value
             tweet.save()
             self.log_object = tweet
         except Exception as e:
@@ -74,7 +74,7 @@ class AdminTweetView(AbstractAPIView):
             'id': tweet.id,
             'text': tweet.text,
             'created_at': tweet.created_at,
-            'status': tweet.status,
+            'status': TweetStatusConstants(tweet.status).name,
             'updated_text': tweet.updated_text
         } for tweet in tweets],
             status=status.HTTP_200_OK)
@@ -86,7 +86,7 @@ class AdminTweetView(AbstractAPIView):
         try:
             user = User.objects.get(id=user_id)
             tweet = Tweet.objects.create(text=text, user=user,
-                                         status=TweetStatusConstants.INITIATED_CREATE)
+                                         status=TweetStatusConstants.INITIATED_CREATE.value)
             self.log_object = tweet
         except Exception as e:
             # log the exception. Use a logger class later.
@@ -102,7 +102,7 @@ class AdminTweetView(AbstractAPIView):
         try:
             tweet = Tweet.objects.get(id=id)
             tweet.updated_text = text
-            tweet.status = TweetStatusConstants.INITIATED_UPDATE
+            tweet.status = TweetStatusConstants.INITIATED_UPDATE.value
             tweet.save()
             self.log_object = tweet
         except Exception as e:
@@ -117,7 +117,7 @@ class AdminTweetView(AbstractAPIView):
         self.log_action = LogActionConstants.DELETE
         try:
             tweet = Tweet.objects.get(id=id)
-            tweet.status = TweetStatusConstants.INITIATED_DELETE
+            tweet.status = TweetStatusConstants.INITIATED_DELETE.value
             tweet.save()
             self.log_object = tweet
         except Exception as e:
@@ -135,30 +135,30 @@ class ApproveChange(AbstractAPIView):
     def get(self, request, id=None):
         if not id:
             tweets = Tweet.objects.exclude(status__in=(
-                TweetStatusConstants.APPROVED, TweetStatusConstants.DELETED)) \
+                TweetStatusConstants.APPROVED.value, TweetStatusConstants.DELETED.value)) \
                 .order_by('-created_at')
             return Response([{
                 'id': tweet.id,
                 'text': tweet.text,
                 'created_at': tweet.created_at,
-                'status': tweet.status,
+                'status': TweetStatusConstants(tweet.status).name,
                 'updated_text': tweet.updated_text
             } for tweet in tweets], status=status.HTTP_200_OK)
         tweet = Tweet.objects.get(id=id)
-        if tweet.status == TweetStatusConstants.INITIATED_CREATE:
-            tweet.status = TweetStatusConstants.APPROVED
+        if tweet.status == TweetStatusConstants.INITIATED_CREATE.value:
+            tweet.status = TweetStatusConstants.APPROVED.value
             tweet.save()
             self.log_type = LogTypeConstants.AUDIT
             self.log_action = LogActionConstants.TWEET
             self.log_object = tweet
-        elif tweet.status == TweetStatusConstants.INITIATED_DELETE:
-            tweet.status = TweetStatusConstants.DELETED
+        elif tweet.status == TweetStatusConstants.INITIATED_DELETE.value:
+            tweet.status = TweetStatusConstants.DELETED.value
             tweet.save()
             self.log_type = LogTypeConstants.AUDIT
             self.log_action = LogActionConstants.DELETE
             self.log_object = tweet
-        elif tweet.status == TweetStatusConstants.INITIATED_UPDATE:
-            tweet.status = TweetStatusConstants.INITIATED_UPDATE
+        elif tweet.status == TweetStatusConstants.INITIATED_UPDATE.value:
+            tweet.status = TweetStatusConstants.INITIATED_UPDATE.value
             tweet.text = tweet.updated_text
             tweet.save()
             self.log_type = LogTypeConstants.AUDIT
@@ -178,8 +178,8 @@ class ReadAuditLogs(AbstractAPIView):
         return Response([{
             'id': action_log.id,
             'user': action_log.user.username if action_log.user else None,
-            'log_type': action_log.log_type,
-            'action': action_log.action,
+            'log_type': LogTypeConstants(action_log.log_type).name,
+            'action': LogActionConstants(action_log.action).name,
             # Forcing string representation.
             'content_object': str(action_log.content_object),
             'created_at': action_log.created_at

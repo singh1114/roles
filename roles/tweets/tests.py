@@ -67,8 +67,8 @@ class TweetTests(TestCase):
         header = {'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = c.get('/tweets/logs/', content_type='application/json', **header)
         self.assertEqual(response.json()[0]['user'], 'username')
-        self.assertEqual(response.json()[0]['log_type'], 2)
-        self.assertEqual(response.json()[0]['action'], 1)
+        self.assertEqual(response.json()[0]['log_type'], 'AUDIT')
+        self.assertEqual(response.json()[0]['action'], 'TWEET')
         self.assertIsNotNone(response.json()[0]['created_at'])
         self.assertEqual(ActionLogModel.objects.all().count(), 5)
 
@@ -92,7 +92,7 @@ class TweetTests(TestCase):
         response = c.get('/tweets/user/' + str(user.id) + '/',
                          content_type='application/json', **header)
         self.assertEqual(response.json()[0]['text'], 'First Tweet')
-        self.assertEqual(response.json()[0]['status'], 3)
+        self.assertEqual(response.json()[0]['status'], 'DELETED')
         self.assertEqual(response.json()[0]['updated_text'], '')
         self.assertIsNotNone(response.json()[0]['created_at'])
         self.assertEqual(ActionLogModel.objects.all().count(), 5)
